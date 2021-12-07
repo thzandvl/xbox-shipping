@@ -12,7 +12,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.notification_hubs_sample_app_java"
+        applicationId "com.contoso.productnotifier"
         minSdkVersion 26
         targetSdkVersion 31
         versionCode 1
@@ -40,7 +40,7 @@ android {
 
     signingConfigs {
         releaseSigningConfig {
-            storeFile rootProject.file("notification-hubs-sample-app-java/notification-hubs-sample-app.jks")
+            storeFile rootProject.file("productnotifier/productnotifier.jks")
             storePassword System.getProperty("APPCENTER_KEYSTORE_PASSWORD")
             keyAlias System.getProperty("APPCENTER_KEY_ALIAS")
             keyPassword System.getProperty("APPCENTER_KEY_PASSWORD")

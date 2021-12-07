@@ -98,7 +98,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         notifymsg = prepareMessage(notifybody)
 
         # if no relevant procucts for notification found, no need to continue
-        if notifybody['quantity'] == 0.0:
+        if notifybody['quantity'] <= 0.0:
             return func.HttpResponse(
                 '{ "msg": "No relevant products found!" }',
                 status_code=status
