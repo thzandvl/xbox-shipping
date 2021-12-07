@@ -1,0 +1,305 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+def VERSION = '1.1.6'
+
+def PUBLISH_ARTIFACT_ID = 'notification-hubs-android-sdk'
+def GROUP_ID = 'com.microsoft.azure'
+
+def IS_CI = project.hasProperty('isCI') ? Boolean.valueOf(isCI) : false
+def REPO_URL = IS_CI ? "file://" + "$System.env.BUILD_ARTIFACTSTAGINGDIRECTORY" : "$buildDir/repo"
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName VERSION
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunnerArguments clearPackageData: 'true'
+
+        buildConfigField 'int', 'VERSION_CODE', "${versionCode}"
+        buildConfigField 'String', 'VERSION_NAME', "\"${versionName}\""
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "push-provider"
+    productFlavors {
+        fcm {
+            dimension "push-provider"
+            versionNameSuffix "-fcm"
+        }
+
+        general {
+            dimension "push-provider"
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+    }
+
+    useLibrary 'android.test.base'
+}
+
+repositories {
+    google()
+    maven { url 'https://jitpack.io' }
+}
+
+configurations {
+    javadocDeps
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation('com.android.volley:volley') {
+        version {
+            strictly '[1.0, 2.0['
+            prefer '1.2.0'
+        }
+    }
+
+    def firebaseMessagingVersion = '22.0.0'
+    fcmApi "com.google.firebase:firebase-messaging:${firebaseMessagingVersion}"
+    generalApi "com.google.firebase:firebase-messaging:${firebaseMessagingVersion}"
+
+    javadocDeps 'com.android.support:support-annotations:28.0.0'
+
+    androidTestImplementation 'androidx.test:core:1.4.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestUtil 'androidx.test:orchestrator:1.4.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+
+    testImplementation 'androidx.test:core:1.4.0'
+    testImplementation 'androidx.test:runner:1.4.0'
+    testImplementation 'androidx.test:rules:1.4.0'
+    testImplementation 'androidx.test.ext:junit:1.1.3'
+    testImplementation 'org.json:json:20210307'
+    testImplementation 'org.powermock:powermock-api-mockito:1.7.4'
+    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
+    testImplementation 'org.powermock:powermock-module-junit4-rule-agent:2.0.9'
+}
+
+
+task clearJar(type: Delete) {
+    delete 'build/fcmRelease/' + PUBLISH_ARTIFACT_ID + '-' + version + '.jar'
+}
+
+task writeVersionFile {
+    doLast {
+        File versionFileHandle = file(REPO_URL + "/com/microsoft/azure/notification-hubs-android-sdk/version.txt")
+        versionFileHandle.write VERSION
+    }
+}
+
+// step 1
+task makeJar(type: Copy) {
+    from('build/intermediates/aar_main_jar/fcmRelease/')
+    into('build/fcmRelease/')
+    include('classes.jar')
+    rename ('classes.jar', PUBLISH_ARTIFACT_ID + '-' +  version + '.jar')
+}
+
+makeJar.dependsOn(clearJar, build)
+
+afterEvaluate {
+    publishing {
+        publications {
+            general(MavenPublication) {
+                groupId = GROUP_ID
+                artifactId = PUBLISH_ARTIFACT_ID
+                version = VERSION
+
+                pom {
+                    name = 'Azure Notification Hubs Android Client SDK'
+                    description = 'Azure Notification Hubs Android Client SDK'
+                    url = 'https://github.com/Azure/azure-notificationhubs-android'
+                    licenses {
+                        license {
+                            name = 'Apache License, Version 2.0'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                            comments = 'A business-friendly OSS license'
+                        }
+                    }
+                    organization {
+                        name = 'Microsoft Corporation'
+                        url = 'http://www.microsoft.com/'
+                    }
+                    developers {
+                        developer {
+                            id = 'marstr'
+                            name = 'Martin Strobel'
+                            email = 'marstr@microsoft.com'
+                            url = 'https://github.com/marstr'
+                            organization = 'Microsoft Corporation'
+                            organizationUrl = 'http://www.microsoft.com/'
+                        }
+                        developer {
+                            id = 'itoys'
+                            name = 'Artem Egorov'
+                            email = 'v-aegorov@microsoft.com'
+                            url = 'https://github.com/itoys'
+                            organization = 'Akvelon, Inc.'
+                            organizationUrl = 'https://akvelon.com/'
+                        }
+                        developer {
+                            id = 'olgaakv'
+                            name = 'Olga Chistyakova'
+                            email = 'v-aegorov@microsoft.com'
+                            url = 'https://github.com/olgaakv'
+                            organization = 'Akvelon, Inc.'
+                            organizationUrl = 'https://akvelon.com/'
+                        }
+                        developer {
+                            id = 'mpodwysocki'
+                            name = 'Matthew Podwysocki'
+                            email = 'matthewp@microsoft.com'
+                            url = 'https://github.com/mpodwysocki'
+                            organization = 'Microsoft Corporation'
+                            organizationUrl = 'http://www.microsoft.com/'
+                        }
+                    }
+                    scm {
+                        url = 'scm:git:https://github.com/Azure/azure-notificationhubs-android'
+                    }
+                }
+
+                from components.generalRelease
+            }
+            fcm(MavenPublication) {
+                groupId = GROUP_ID
+                artifactId = PUBLISH_ARTIFACT_ID + '-fcm'
+                version = VERSION
+
+                pom {
+                    name = 'Azure Notification Hubs Android Client SDK'
+                    description = 'Azure Notification Hubs Android Client SDK'
+                    url = 'https://github.com/Azure/azure-notificationhubs-android'
+                    licenses {
+                        license {
+                            name = 'Apache License, Version 2.0'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                            comments = 'A business-friendly OSS license'
+                        }
+                    }
+                    organization {
+                        name = 'Microsoft Corporation'
+                        url = 'http://www.microsoft.com/'
+                    }
+                    developers {
+                        developer {
+                            id = 'marstr'
+                            name = 'Martin Strobel'
+                            email = 'marstr@microsoft.com'
+                            url = 'https://github.com/marstr'
+                            organization = 'Microsoft Corporation'
+                            organizationUrl = 'http://www.microsoft.com/'
+                        }
+                        developer {
+                            id = 'itoys'
+                            name = 'Artem Egorov'
+                            email = 'v-aegorov@microsoft.com'
+                            url = 'https://github.com/itoys'
+                            organization = 'Akvelon, Inc.'
+                            organizationUrl = 'https://akvelon.com/'
+                        }
+                        developer {
+                            id = 'olgaakv'
+                            name = 'Olga Chistyakova'
+                            email = 'v-aegorov@microsoft.com'
+                            url = 'https://github.com/olgaakv'
+                            organization = 'Akvelon, Inc.'
+                            organizationUrl = 'https://akvelon.com/'
+                        }
+                        developer {
+                            id = 'mpodwysocki'
+                            name = 'Matthew Podwysocki'
+                            email = 'matthewp@microsoft.com'
+                            url = 'https://github.com/mpodwysocki'
+                            organization = 'Microsoft Corporation'
+                            organizationUrl = 'http://www.microsoft.com/'
+                        }
+                    }
+                    scm {
+                        url = 'scm:git:https://github.com/Azure/azure-notificationhubs-android'
+                    }
+                }
+
+                from components.fcmRelease
+            }
+        }
+        repositories {
+            maven {
+                name = 'BuildDir'
+                url = REPO_URL
+            }
+        }
+    }
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    source += android.sourceSets.fcm.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.javadocDeps
+
+    android.libraryVariants.all { variant ->
+      owner.classpath += variant.javaCompileProvider.get().classpath
+    }
+
+    exclude '**/*.md'
+    exclude '**/InstallationPutRequest.java'
+
+    def capturedOutput = []
+    def listener = { capturedOutput << it } as StandardOutputListener
+    doFirst {
+        logging.addStandardErrorListener(listener)
+        logging.addStandardOutputListener(listener)
+    }
+    doLast {
+        logging.removeStandardOutputListener(listener)
+        logging.removeStandardErrorListener(listener)
+        def errorMessage = ""
+        capturedOutput.each { e ->
+            if(e.toString() =~ " warning: " || e.toString() =~ " error: ") {
+                errorMessage += "\n" + e.toString()
+            }
+        }
+
+        if (errorMessage != "") {
+            throw new GradleException(errorMessage)
+        }
+    }
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    archiveClassifier.set('javadoc')
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+    archives file : file('build/fcmRelease/' + PUBLISH_ARTIFACT_ID + '-' + version + '.jar')
+}
