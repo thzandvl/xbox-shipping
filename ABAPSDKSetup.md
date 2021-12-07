@@ -206,7 +206,7 @@ Use the following settings :
 >Note : you can also implement the events `CHANGED`, `DELETED`.
 
 #### Message filtering on SAP side
-If you want to filter on which Deliveries get send to the Azure Service bus, then you can implement a check function module. If this function module raises a 'NO_APPROVAL_TO_START' exception then the call to the event handler is cancelled and no message is send out. A example function module can be found at 'ZBD_CHECKXBOXSHIPMENTEVENT'. Since in our example we're only interested deliveries concerning XBOX's, this function module checks the material numbers contained within the delivery and raises the 'NO_APPROVAL_TO_START' exception when no XBOX is found.
+If you want to filter on which Deliveries get send to the Azure Service bus, then you can implement a check function module. If this function module raises a 'NO_APPROVAL_TO_START' exception then the call to the event handler is cancelled and no message is send out. A example function module can be found at [ZBD_CHECKXBOXSHIPMENTEVENT](ABAPCode\ZBD_CHECKXBOXSHIPMENTEVENT.abap). Since in our example we're only interested deliveries concerning XBOX's, this function module checks the material numbers contained within the delivery and raises the 'NO_APPROVAL_TO_START' exception when no XBOX is found.
 
 ```
   ...
@@ -267,4 +267,3 @@ The message should look like :
 ```
 
 >Note : if the message does not appear in your Queue, then you can have a look at the application log `SLG1` to get some more information on possible errors.
-
