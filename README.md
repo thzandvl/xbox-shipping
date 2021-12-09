@@ -51,4 +51,4 @@ After the Base64 decoding is done the JSON output can be send to the Azure Funct
 After selecting the *Azure Functions* action you can choose the Azure Function App which you created in the earlier step. As *Request Body* provide the outputs of the *Compose* function from the earlier step.
 
 ### Android app
-Description will follow soon.
+The steps to use an Android App to receive notifications from the Azure Notification Hub are described in the [androidApp](https://github.com/thzandvl/xbox-shipping/tree/main/androidApp) section.
