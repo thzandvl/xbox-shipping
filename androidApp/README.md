@@ -16,7 +16,7 @@ The Android App used for this demo is based on the demo example from the documen
 ### Create a firebase project that supports FCM
 Create a new Firebase project on the [Firebase portal](https://console.firebase.google.com/).
 
-![Firebase Configuration](../images/androidApp/firebase-configuration.png)
+![Firebase Configuration](../images/AndroidApp/firebase-configuration.png)
 
 The package name used is `com.contoso.productnotifier.fcm`. Once you added the app to the project you will get a `google-services.json` file. Copy this file to the `androidApp\src\fcm` folder.
 
@@ -38,7 +38,7 @@ Once the `google-services.json` and `secrets.properties` are added to the projec
 ## Subscribing to the premium notification service
 Before notifications can be received the device token of the Android device should be known in the CosmosDB referred to in the Function App. A new entry is created in the CosmosDB once the subscribe button is used in the Android App.
 
-![Android Subscribe](../images/androidApp/androidapp-subscribe.png)
+![Android Subscribe](../images/AndroidApp/androidapp-subscribe.png)
 
 The button is added to the app from the tutorial and the actions behind it is that a new subscription object is created with the values required for the CosmosDB entry. This object can later be serialized to a JSON object.
 
