@@ -16,6 +16,10 @@ The architecture for the solution looks as follows:
 See [ABAP SDK](ABAPSDKSetup.md)
 #### ASAPIO
 
+### Azure Service Bus
+
+### Azure Notification Hub
+
 ### Azure LogicApp
 
 An Azure Logic App is used to read the messages pushed by SAP into the Azure Service Bus from the queue. The messages are pushed in an Base64 format to prevent conflicts. Therefore the message needs to be decoded before it can be used. The format of the message is in JSON. This JSON message is send to the Azure Function App which is based on an HTTP trigger template.
@@ -40,8 +44,6 @@ After the Base64 decoding is done the JSON output can be send to the Azure Funct
 
 ![Azure Function App](images/LogicApp/azure-functions.png)
 
-### Azure Service Bus
-
-### Azure Notification Hub
+After selecting the *Azure Functions* action you can choose the Azure Function App which you created in the earlier step. As *Request Body* provide the outputs of the *Compose* function from the earlier step.
 
 ### Android app
