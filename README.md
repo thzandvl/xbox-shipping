@@ -27,7 +27,7 @@ The first component is a Azure Service Bus component and is triggered once a mes
 
 The Base64 decoding is done by using the `base64ToString()` function in a new *Compose* action which is part of *Data Operations*. The code used is:
 
-````json
+```json
 "actions": {
     "Base64Decode": {
         "inputs": "@base64ToString(triggerBody()['ContentData'])",
