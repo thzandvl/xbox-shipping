@@ -14,11 +14,15 @@ The architecture for the solution looks as follows:
 
 #### ABAP SDK
 See [ABAP SDK](ABAPSDKSetup.md)
+
 #### ASAPIO
+Description will follow soon.
 
 ### Azure Service Bus
+Description will follow soon.
 
 ### Azure Notification Hub
+The steps to process the SAP message to a notification are described in the [functionApp](https://github.com/thzandvl/xbox-shipping/tree/main/functionApp) section.
 
 ### Azure LogicApp
 
@@ -47,3 +51,4 @@ After the Base64 decoding is done the JSON output can be send to the Azure Funct
 After selecting the *Azure Functions* action you can choose the Azure Function App which you created in the earlier step. As *Request Body* provide the outputs of the *Compose* function from the earlier step.
 
 ### Android app
+Description will follow soon.

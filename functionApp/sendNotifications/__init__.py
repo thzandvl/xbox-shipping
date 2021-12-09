@@ -61,20 +61,19 @@ def checkMessageValues(sapmsg, product):
 # Prepare the notification message
 def prepareMessage(notifybody):
     logging.info("Create message")
-    if notifybody['quantity'] > 0:
-        notifymsg = {
-            "notification": {
-                "title":"Your order is on its way to the store", 
-                "body":"We are happy to inform you that your order has been shipped to the store."
-            }, 
-                "data": {
-                    "status":notifybody['event'],
-                    "product":notifybody['product'],
-                    "quantity":notifybody['quantity'],
-                    "uom":notifybody['uom'],
-                    "salesorder":notifybody['salesorder']
-                }
+    notifymsg = {
+        "notification": {
+            "title":"Your order is on its way to the store", 
+            "body":"We are happy to inform you that your order has been shipped to the store."
+        }, 
+            "data": {
+                "status":notifybody['event'],
+                "product":notifybody['product'],
+                "quantity":notifybody['quantity'],
+                "uom":notifybody['uom'],
+                "salesorder":notifybody['salesorder']
             }
+        }
     
     logging.info(notifymsg)
     return notifymsg
@@ -93,10 +92,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         # check the values in the message
         notifybody = checkMessageValues(sapmsg, "MZ-FG-R100")
 
-        # prepare the message
-        logging.info("Prepare notification message")
-        notifymsg = prepareMessage(notifybody)
-
         # if no relevant procucts for notification found, no need to continue
         if notifybody['quantity'] <= 0.0:
             return func.HttpResponse(
@@ -104,13 +99,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 status_code=status
             )
 
-        # create the notification hub
-        logging.info("Prepare notification")
-        hub = anh.AzureNotificationHub(APP_NH_CONNECTION_STRING, APP_HUB_NAME, False)
+        # prepare the message
+        logging.info("Prepare notification message")
+        notifymsg = prepareMessage(notifybody)
 
         # retrieve the device tokens to notify from the Cosmos DB
         logging.info("Retrieve device tokens")
         items = retrieveDeviceTokens("xbox-series-x")
+
+        # create the notification hub
+        logging.info("Prepare notification")
+        hub = anh.AzureNotificationHub(APP_NH_CONNECTION_STRING, APP_HUB_NAME, False)
 
         # send the notifications to the relevant devices
         logging.info("Send notification to Android devices")
