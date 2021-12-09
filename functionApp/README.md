@@ -88,7 +88,7 @@ All the required JSON values for the notification message are now defined. Next 
 
 ## Prepare the notification
 
-Now we have the JSON values we can prepare the message.
+Now that we have the JSON values we can prepare the notification message.
 
 ```py
 # if no relevant procucts for notification found, no need to continue
@@ -165,7 +165,7 @@ The DB credentials are stored seperately to prevent these from being published t
 
 ## Send the notifications
 
-Now the preparation steps are completed and the notification can actually be send. Make sure you have the Azure Notification Hub deployed in your subscription as described [here](https://docs.microsoft.com/en-us/azure/notification-hubs/create-notification-hub-portal). The code used for sending the notifications via the Azure Notification Hub can be found [here](https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-python-push-notification-tutorial). The documentation describes all the steps and code used until the moment that the notifications are send to one of the supported platforms, in our case Android.
+As the preparation steps are completed the notifications can actually be send. Make sure you have the Azure Notification Hub deployed in your subscription as described [here](https://docs.microsoft.com/en-us/azure/notification-hubs/create-notification-hub-portal). The code used for sending the notifications via the Azure Notification Hub can be found [here](https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-python-push-notification-tutorial). The documentation describes all the steps and code used until the moment that the notifications are send to one of the supported platforms, in our case Android.
 
 First a new Azure Notification Hub instance is created with the connection string and hub name which are both defined after deploying the Azure Notification Hub on Azure. You can find the connectiong string under **Access Policies** in the Azure Portal under your Azure Notification Hub deployment.
 
@@ -237,3 +237,8 @@ Once you publish the Function App to Azure the JSON file will not be included. T
 ![Function App Configuration](../images/FunctionApp/functionapp-configuration.png)
 
 These are the parameters set in the demo environment. Make sure to set these otherwise the solution will not work.
+
+## Links used in the documentation
+[Quickstart: Create a function in Azure with Python using Visual Studio Code](https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-vs-code-python)\
+[Quickstart: Create an Azure notification hub in the Azure portal](https://docs.microsoft.com/en-us/azure/notification-hubs/create-notification-hub-portal)\
+[How to use Notification Hubs from Python](https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-python-push-notification-tutorial)
