@@ -279,7 +279,7 @@ Modifications added are in the `build.gradle` file located in the productNotifie
 
 ### The credentials
 
-```json
+```
 buildConfigField("String", "hubName", "\"${System.getenv('APP_HUB_NAME') ?: secretsProperties['APP_HUB_NAME']}\"")
 buildConfigField("String", "hubListenConnectionString", "\"${System.getenv('APP_NH_CONNECTION_STRING') ?: secretsProperties['APP_NH_CONNECTION_STRING']}\"")
 buildConfigField("String", "cosmosEndpoint", "\"${System.getenv('APP_COSMOS_ENDPOINT') ?: secretsProperties['APP_COSMOS_ENDPOINT']}\"")
