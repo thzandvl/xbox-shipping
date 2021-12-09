@@ -40,7 +40,7 @@ Before notifications can be received the device token of the Android device shou
 
 ![Android Subscribe](../images/AndroidApp/androidapp-subscribe.png)
 
-The button is added to the app from the tutorial and the actions behind it is that a new subscription object is created with the values required for the CosmosDB entry. This object can later be serialized to a JSON object.
+The button is added to the app from the tutorial and one of the actions behind it is that a new subscription object is created with the values required for the CosmosDB entry. This object can later be serialized to a JSON object.
 
 ### Subscription.java
 
@@ -100,7 +100,7 @@ public class Subscription {
 
 ### SetupFragment.java
 
-This code is added to the `SetupFragment.java` file. For the CosmosDB connection the [REST API for CosmosDB](https://docs.microsoft.com/en-us/rest/api/cosmos-db/) is used. Therefore a new Java class is created to process these requests. Volley can be used to build the REST requests. For the connection to the CosmosDB REST API a resourcelink and resourceID are required which are hardcoded in the code. The entry that will be added to the `subscriptions` container is a `docs` object and therefore this is defined in the request.
+For the CosmosDB connection the [REST API for CosmosDB](https://docs.microsoft.com/en-us/rest/api/cosmos-db/) is used. Therefore a new Java class is created to process these requests. Volley can be used to build the REST requests. For the connection to the CosmosDB REST API a resourcelink and resourceID are required which are hardcoded in the code. The entry that will be added to the `subscriptions` container is a `docs` object and therefore this is defined in the request.
 
 ```java
 final Button subscribeButton = root.findViewById(R.id.add_subscription_button);
@@ -125,7 +125,7 @@ subscribeButton.setOnClickListener(v -> {
 
 ### CosmosDB.java
 
-For every REST request an [authorization string](https://docs.microsoft.com/en-us/rest/api/cosmos-db/access-control-on-cosmosdb-resources) needs to be provided. In the documentation multiple examples are shown. The result of the authorization string is very delicate, one mistake will result in a faulty string.
+For every REST request an [authorization string](https://docs.microsoft.com/en-us/rest/api/cosmos-db/access-control-on-cosmosdb-resources) needs to be provided. In the documentation multiple examples are shown. The result of the authorization string is very delicate, one mistake will result in a faulty string. The Java representation of the code is shown below.
 
 ```java
 public String generateAuthToken(String verb, String resourceType, String resourceId, String date, String key) {
@@ -275,7 +275,7 @@ public String httpRequestPOST(String date, String authToken, JSONObject jsonBody
 
 Receiving the notifications is the same as described in the [tutorial](https://docs.microsoft.com/en-us/azure/notification-hubs/android-sdk). Using the [notification-hubs-sample-app-java](https://github.com/Azure/azure-notificationhubs-android/tree/main/notification-hubs-sample-app-java) and [notification-hub-sdk](https://github.com/Azure/azure-notificationhubs-android/tree/main/notification-hubs-sdk) from the [repositoy](https://github.com/Azure/azure-notificationhubs-android).
 
-Modifications added are in the `build.gradle` file where some dependencies used were added and credentials for the CosmosDB.
+Modifications added are in the `build.gradle` file located in the productNotifier folder where some dependencies used were added and credentials for the CosmosDB.
 
 ### The credentials
 
@@ -288,7 +288,7 @@ buildConfigField("String", "cosmosKey", "\"${System.getenv('APP_COSMOS_KEY') ?: 
 
 ### The dependencies
 
-```json
+```
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -302,7 +302,7 @@ dependencies {
 
 ### Some packaging options
 
-```json
+```
 android {
     ...
 
@@ -323,7 +323,7 @@ android {
 
 The minimal SDK version used in the demo is 26 because of some dependencies.
 
-```json
+```
 android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
