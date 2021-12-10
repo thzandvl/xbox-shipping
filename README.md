@@ -1,4 +1,4 @@
-# Xbox shipping scenario using a SAP Event Driven Architecture
+# Xbox shipping scenario using an SAP Event Driven Architecture
 ## Introduction
 This repo contains all the artifacts and descriptions to reproduce our prototype for an event-driven architecture with SAP S/4HANA. See our [blog post](https://blogs.sap.com/2021/12/09/hey-sap-where-is-my-xbox-an-insight-into-capitalizing-on-event-driven-architectures/) for the complete story.
 
