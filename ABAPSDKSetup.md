@@ -1,4 +1,4 @@
-# Raise SAP Events using SAP SDK
+# Cosnume SAP Events using SAP SDK
 
 In this section we'll use the ABAP SDK for Azure to send SAP Events towards a Azure Service bus. Ub our example we want to send messages upon the `create`, `change` or `delete` event of a SAP Delivery.
 More information on the `ABAP SDK for Azure` can be found at [microsoft/ABAP-SDK-for-Azure](https://github.com/Microsoft/ABAP-SDK-for-Azure).
@@ -8,34 +8,7 @@ You can easily install ABAP SDK for Azure in your landscape through [abapGit](ht
 
 >Note: : `abapGit` is mandatory to install `ABAP SDK for Azure`. If you do not already have it in your SAP system, please install it. The instructions can be found in Github at [ABAP SDK Installation](https://github.com/microsoft/ABAP-SDK-for-Azure/blob/master/ABAP%20SDK%20for%20Azure%20-%20Github.md#heading--1-7).
 
-## Azure Setup
-The shipment messages will be send to a queue within a Azure Service Bus Namespace. We will set this up first.
-
-### Azure Service NameSpace
-
-<img src="images/ABAPSDK/servicebuscreate.png">
-
-<img src="images/ABAPSDK/servicebuscreate2.png">
-
-The `Basic`pricing tier is sufficient for our example.
-
-### Azure Service Bus Queue
-Now you need to create a queue within your Azure Service Bus Namespace.
-
-<img src="images/ABAPSDK/createqueue1.png">
-
-<img src="images/ABAPSDK/createqueue2.png">
-
-To connect the ABAP SDK to this queue, you'll need the `Queue URL` and a `Shared Access Policy`.
-The `Host name`can be found at the Queue Overview Tab.
-queue_overview.png
-
-Here you can also find the link to the `Shared Access Policies (SAS)`. Add a new `SAS Policy` with send permissions. Note the primary key.
-SASPolicy.png
-
-On the Azure side everything is now ready. Let's turn to the SAP System.
-
-## SAP Setup
+## SAP Setup for ABAP SDK
 ### RFC Destination
 First we need to create a RFC Destination pointing towards our Azure Service Bus Queue. We need our `Queue URL`for this. This url needs to be split into `Host` and `Path Prefix`.
 Use transaction `SM59 - Configuration of RFC Connections`. RFC Connection type `G - HTTP Connection to External Server`.
