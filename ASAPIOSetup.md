@@ -235,4 +235,4 @@ The message should look like :
 
 ```
 
-When the response code is '201 - Created', then the message successfully arrived in the Service Bus Queue.
+When the HTTP response code is '201 - Created', then the message successfully arrived in the Service Bus Queue.

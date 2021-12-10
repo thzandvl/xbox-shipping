@@ -2,14 +2,12 @@
 ## Introduction
 This repo contains all the artifacts and descriptions to reproduce our prototype for an event-driven architecture with SAP S/4HANA. See our [blog post](https://blogs.sap.com/2021/12/09/hey-sap-where-is-my-xbox-an-insight-into-capitalizing-on-event-driven-architectures/) for the complete story.
 
-The screenshots and remaining descriptions will be completed over the coming days.
-
 ## Setup
 
 The architecture for the solution looks as follows:
 <img src="images/xbox-overview.png" />
 
-The scenario start with an event when a Delivery in SAP created. This event is used to send out a message to Azure Service Bus. Receivers, in our example a logic app listening to Azure Service Bus, will send out Notifications to the end-customer indicating their delivery is on its way.
+The scenario starts with an event upond creation of a Delivery within SAP. This event is used to send out a message to Azure Service Bus. Receivers, in our example a logic app listening to Azure Service Bus, will send out Notifications to the end-customer indicating their delivery is on its way.
 
 ### Azure Service Bus
 Azure Service Bus is a fully managed enterprise message broker with message queues and publish-subscribe topics (in a namespace). For more information, please consult [What is Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview).
