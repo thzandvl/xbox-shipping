@@ -14,31 +14,8 @@ The scenario start with an event when a Delivery in SAP created. This event is u
 ### Azure Service Bus
 Azure Service Bus is a fully managed enterprise message broker with message queues and publish-subscribe topics (in a namespace). For more information, please consult [What is Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview).
 
-The Delivery messages will be send to a queue within a Azure Service Bus Namespace. We will set this up first.
-
-#### Azure Service Bus NameSpace
-Search for 'Azure Service Bus' on the Marketplace and press 'Create'.
-<img src="images/ServiceBus/servicebuscreate.png" height=100>
-
-Provide a resource group, location and name.
-The 'Basic' pricing tier is sufficient for our example.
-<img src="images/ServiceBus/servicebuscreate2.png">
-
-#### Azure Service Bus Queue
-Now you need to create a queue within your Azure Service Bus Namespace.
-
-<img src="images/ServiceBus/createqueue1.png">
-
-<img src="images/ServiceBus/createqueue2.png">
-
-To connect the ABAP SDK or ASAPIO to this queue, you'll need the `Queue URL` and a `Shared Access Policy`.
-The `Host name`can be found at the Queue Overview Tab.
-<img src="images/ServiceBus/queue_overview.png">
-
-Here you can also find the link to the `Shared Access Policies (SAS)`. Add a new `SAS Policy` with send permissions. Note the primary key.
-<img src="images/ServiceBus/SASPolicy.png">
-
-On the Azure side everything is now ready. Let's turn to the SAP System.
+The Delivery messages will be send to a queue within a Azure Service Bus Namespace. Instruction can be found at [Azure Service Bus setup](ServiceBusSetup.md)
+After this step we can turn to the setup on the SAP side.
 
 ### SAP Setup
 The setup on SAP side mainly consists of :
@@ -48,8 +25,8 @@ The setup on SAP side mainly consists of :
 
 To raise the event we will be using `SAP Event Type Linkage`. Since we will be sending out our own message (we're not adhering to standard), we will need custom code to create this json message. For sending the message we used 2 methods. We'll be using the [ABAP SDK for Azure](https://github.com/Microsoft/ABAP-SDK-for-Azure) and [ASAPIO](https://asapio.com/). Both methods will plug into SAP Event Linages on their own way. For ABAP SDK we'll need to create a custom ABAP Class. This class will create the custom message and link to Azure using a class delivered with the ABAP SDK. ASAPIO comes with a predefined function module to hook the ASAPIO framework into the SAP Event Linkage. Both ABAP SDK and ASAPIO depend on customizing tables and a RFC destionation for the connectivity towards Azure.
 
-ABAP SDK Specific setup can be found [here](ABAPSDKSetup.md)
-ASAPIO specific setup can be found [here](ASAPIOSetup.md)
+* ABAP SDK Specific setup can be found [here](ABAPSDKSetup.md)
+* ASAPIO specific setup can be found [here](ASAPIOSetup.md)
 
 ### Azure Notification Hub
 The steps to process the SAP message to a notification are described in the [functionApp](https://github.com/thzandvl/xbox-shipping/tree/main/functionApp) section.
