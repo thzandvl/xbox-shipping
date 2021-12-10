@@ -2,7 +2,7 @@
 ## Introduction
 This repo contains all the artifacts and descriptions to reproduce our prototype for an event-driven architecture with SAP S/4HANA. See our [blog post](https://blogs.sap.com/2021/12/09/hey-sap-where-is-my-xbox-an-insight-into-capitalizing-on-event-driven-architectures/) for the complete story.
 
-The screenshot and remaining descriptions will be completed over the coming days.
+The screenshots and remaining descriptions will be completed over the coming days.
 
 ## Setup
 
@@ -17,11 +17,8 @@ Azure Service Bus is a fully managed enterprise message broker with message queu
 The Delivery messages will be send to a queue within a Azure Service Bus Namespace. We will set this up first.
 
 #### Azure Service Bus NameSpace
-Search for 'Azure Service Bus' on the Marketplace.
-<img src="images/ServiceBus/marketplace.png"/>
-
-Press Create
-<img src="images/ServiceBus/servicebuscreate.png">
+Search for 'Azure Service Bus' on the Marketplace and press 'Create'.
+<img src="images/ServiceBus/servicebuscreate.png" height=100>
 
 Provide a resource group, location and name.
 The 'Basic' pricing tier is sufficient for our example.
