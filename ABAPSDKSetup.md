@@ -1,6 +1,6 @@
-# Cosnume SAP Events using SAP SDK
+# Consume SAP Events using the ABAP SDK for Azure
 
-In this section we'll use the ABAP SDK for Azure to send SAP Events towards a Azure Service bus. Ub our example we want to send messages upon the `create`, `change` or `delete` event of a SAP Delivery.
+In this section we'll use the ABAP SDK for Azure to send SAP Events towards a Azure Service bus. In our example we want to send messages upon the `create`, `change` or `delete` event of a SAP Delivery.
 More information on the `ABAP SDK for Azure` can be found at [microsoft/ABAP-SDK-for-Azure](https://github.com/Microsoft/ABAP-SDK-for-Azure).
 
 ## Prerequisites
@@ -9,9 +9,9 @@ You can easily install ABAP SDK for Azure in your landscape through [abapGit](ht
 >Note: : `abapGit` is mandatory to install `ABAP SDK for Azure`. If you do not already have it in your SAP system, please install it. The instructions can be found in Github at [ABAP SDK Installation](https://github.com/microsoft/ABAP-SDK-for-Azure/blob/master/ABAP%20SDK%20for%20Azure%20-%20Github.md#heading--1-7).
 
 ## SAP Setup for ABAP SDK
-### RFC Destination
-First we need to create a RFC Destination pointing towards our Azure Service Bus Queue. We need our `Queue URL`for this. This url needs to be split into `Host` and `Path Prefix`.
-Use transaction `SM59 - Configuration of RFC Connections`. RFC Connection type `G - HTTP Connection to External Server`.
+### RFC Connection
+First we need to create a RFC Connection pointing towards our Azure Service Bus Queue. We need our `Queue URL`for this. This url needs to be split into `Host` and `Path Prefix`.
+Use transaction `SM59 - Configuration of RFC Connections`. The RFC Connection type is set to `G - HTTP Connection to External Server`.
 
 <img src="images/ABAPSDK/RFCDest1.png">
 
@@ -19,7 +19,7 @@ You'll also need to enable SSL. For this you need to upload the certificate chai
 
 <img src="images/ABAPSDK/RFCDest2.png">
 
-You can do a connection test. This will result in a pop-up request a user-id and password to logon (or a `401 - Unauthorized error`), since the `SAS Policy` required by the Azure Service Bus is missing. We need to enter this in the ABAP SDK customising tables.
+You can do a connection test. This will result in a pop-up request a user-id and password to logon (or a `401 - Unauthorized error`), since the `SAS Policy` required by the Azure Service Bus is missing. We need to enter this in the ABAP SDK customizing tables.
 
 ### ABAP SDK Setup
 Use transaction `SM30 - Table Maintenance` to create entries in the following ABAP SDK tables.
@@ -63,11 +63,11 @@ We now implement the `ON_EVENT` method as required by the Interface.
 
 This method will : 
 1. Gather the required delivery information to be send in the message
-1. Generate the JSON Message
-1. Send the JSON Message to the Azure Service Bus Queue using the ABAP SDK
+2. Generate the JSON Message
+3. Send the JSON Message to the Azure Service Bus Queue using the ABAP SDK
 
 #### Gather the required delivery information
-Here I read directly from the Delivery tables, but one could as well call a BAPI to get the Delivery Details. The Id of the shipment can be found the ´SENDER´ object.
+For our simple example we can directly read the Delivery tables, but one could as well call a BAPI to get the Delivery details. The needed Id of the shipment can be found the ´SENDER´ object.
 
 ```
   ...
@@ -107,7 +107,7 @@ Here I read directly from the Delivery tables, but one could as well call a BAPI
 The results are put within a structure which 'represents' the json message we want to send out.
 
 #### Convert to JSON
-Here I'm using the `/ui2/cl_json=>serialize` which provides a convenient method to convert an ABAP structure into json.
+The `/ui2/cl_json=>serialize` class provides a convenient method to convert an ABAP structure into json.
 
 ```
     ...
@@ -142,7 +142,8 @@ Sending out the json xstring happens using the `send` method of this object.
 
 #### Error handling
 Since the call to our method takes place in background, the error handling is done by writing to the application log. The application log object can be defined using `slg0`. The application log can be consulted using `slg1`.
-applogobjects.png
+
+<img src="images/ABAPSDK/applogobjects.png">
 
 ```
   "Constants for Application Log
@@ -163,23 +164,25 @@ applogobjects.png
 #### Event Linkage Definition
 Now we can define the Event Linkage. This is done in transaction `SWE2 - Event Type Linkages`.
 
-eventlinkages2.png
+<img src="images/ABAPSDK/eventlinkages2.png">
 
-eventlinkage1.png
+<img src="images/ABAPSDK/eventlinkage1.png">
 
 Here we need to define a new entry for the Delivery events we want to implement.
 Use the following settings :
 * Object Category = `BOR Object Type`
 * Object Type = `LIKP - Delivery`
 * Event = `CREATED`
+* Receiver Type = `ABSDK`
 * Receiver Call = `Method`
 * Class Name = name of the class we implemented above
 * Linkage Activated = yes
 
+>Note : the receiver type can be freely chosen.
 >Note : you can also implement the events `CHANGED`, `DELETED`.
 
 #### Message filtering on SAP side
-If you want to filter on which Deliveries get send to the Azure Service bus, then you can implement a check function module. If this function module raises a 'NO_APPROVAL_TO_START' exception then the call to the event handler is cancelled and no message is send out. A example function module can be found at [ZBD_CHECKXBOXSHIPMENTEVENT](ABAPCode\ZBD_CHECKXBOXSHIPMENTEVENT.abap). Since in our example we're only interested deliveries concerning XBOX's, this function module checks the material numbers contained within the delivery and raises the 'NO_APPROVAL_TO_START' exception when no XBOX is found.
+If you want to filter which Deliveries are sent to the Azure Service bus, then you can implement a check function module. If this function module raises a 'NO_APPROVAL_TO_START' exception then the call to the event handler is cancelled and no message is send out. A example function module can be found at [ZBD_CHECKXBOXSHIPMENTEVENT](ABAPCode\ZBD_CHECKXBOXSHIPMENTEVENT.abap). Since in our example we're only interested deliveries concerning XBOX's, this function module checks the material numbers contained within the delivery and raises the 'NO_APPROVAL_TO_START' exception when no XBOX is found.
 
 ```
   ...
@@ -197,8 +200,8 @@ If you want to filter on which Deliveries get send to the Azure Service bus, the
   ...
 ```
 
-### Testing
-You can now test the setup by either creating a Delivery (transation vl01) or by using the 'SWUE - Create Event' to simulate a Event. 
+## Testing
+You can now test the setup by either creating a Delivery (transation vl01) or by using the 'SWUE - Create Event' to simulate a Event.
 >Note: when you use the `SWUE` transaction, you still need a delivery ;)
 
 <img src="images/ABAPSDK/swue.png">
@@ -208,7 +211,8 @@ If the event was successfully started, the following appears.
 <img src="images/ABAPSDK/swue2.png">
 
 You should now see a message appearing in your Service Bus Queue.
-messageinservicebusoverview.png
+
+<img src="images/ABAPSDK/messageinservicebusoverview.png">
 
 Use the `Service Bus Explorer` to `Receive`or `Peek` into the message.
 

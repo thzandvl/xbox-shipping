@@ -19,8 +19,8 @@ After this step we can turn to the setup on the SAP side.
 
 ### SAP Setup
 The setup on SAP side mainly consists of :
-1. Raising & capturing the event when a shipment is created, changed (or deleted)
-2. creating the message
+1. Raise & capture the event when a Delivery is created, changed (or deleted)
+2. creating the corresponding message
 3. send the message to the Azure receiver, in this case this is a Azure Service Bus 
 
 To raise the event we will be using `SAP Event Type Linkage`. Since we will be sending out our own message (we're not adhering to standard), we will need custom code to create this json message. For sending the message we used 2 methods. We'll be using the [ABAP SDK for Azure](https://github.com/Microsoft/ABAP-SDK-for-Azure) and [ASAPIO](https://asapio.com/). Both methods will plug into SAP Event Linages on their own way. For ABAP SDK we'll need to create a custom ABAP Class. This class will create the custom message and link to Azure using a class delivered with the ABAP SDK. ASAPIO comes with a predefined function module to hook the ASAPIO framework into the SAP Event Linkage. Both ABAP SDK and ASAPIO depend on customizing tables and a RFC destionation for the connectivity towards Azure.
