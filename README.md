@@ -40,7 +40,7 @@ The steps to create a Power App that interacts with SAP are described [here](Pow
 
 ### Azure LogicApps
 
-For the demo we use multiple Azure Logic Apps to read the messages pushed by SAP into the Azure Service Bus. The messages are pushed in an Base64 format to prevent conflicts. Therefore the messages needs to be decoded before it can be used. The format of the message is in JSON. To use the JSON easily in the following steps we parse the message to a JSON object. The rest of the steps are dependant on the scenario we are processing.
+For the demo we use multiple Azure Logic Apps to read the messages pushed by SAP into the Azure Service Bus. The messages are pushed in an Base64 format to prevent conflicts. Therefore the messages need to be decoded before it can be used. The format of the message is in JSON. To use the JSON easily in the following steps we parse the message to a JSON object. The rest of the steps are dependant on the scenario we are processing.
 
 ![Logic App structure](images/LogicApp/xbox-logicapp.png)
 

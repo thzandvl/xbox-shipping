@@ -19,7 +19,7 @@ The Base64 decoding is done by using the `base64ToString()` function in a new *C
 
 After the Base64 decoding is done the JSON output will be parsed as a JSON object. The JSON schema is as follows:
 
-``` json
+```json
 {
     "properties": {
         "busobj": {
