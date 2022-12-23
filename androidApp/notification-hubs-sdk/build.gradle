@@ -15,10 +15,10 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName VERSION
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         testInstrumentationRunnerArguments clearPackageData: 'true'
+
+        versionCode = 1
 
         buildConfigField 'int', 'VERSION_CODE', "${versionCode}"
         buildConfigField 'String', 'VERSION_NAME', "\"${versionName}\""
@@ -35,7 +35,6 @@ android {
     productFlavors {
         fcm {
             dimension "push-provider"
-            versionNameSuffix "-fcm"
         }
 
         general {
@@ -260,7 +259,7 @@ task androidJavadocs(type: Javadoc) {
     classpath += configurations.javadocDeps
 
     android.libraryVariants.all { variant ->
-      owner.classpath += variant.javaCompileProvider.get().classpath
+        owner.classpath += variant.javaCompileProvider.get().classpath
     }
 
     exclude '**/*.md'

@@ -15,6 +15,9 @@ KEY = os.environ["COSMOS_KEY"]
 DATABASE = os.environ["COSMOS_DB"]
 CONTAINER = os.environ["COSMOS_CONTAINER"]
 
+# Product ID
+PRD_ID = "MZ-FG-R100"
+
 # Retrieve the device tokens from the Cosmos DB
 def retrieveDeviceTokens(category):
     try:
@@ -29,10 +32,11 @@ def retrieveDeviceTokens(category):
         return list()
 
 
-# Check if all the required list items exist
-def checkMessageValues(sapmsg, product):
+# Check if all the required list items exist in the LIKP message
+def checkMessageValuesLIKP(sapmsg, product):
     notifybody = {}
     logging.info("Check if all data is available in sap message")
+    notifybody['objkey'] = sapmsg.get('objkey', "")
     notifybody['event'] = sapmsg.get('event', "")
     notifybody['loadingdate'] = sapmsg.get('loadingdate', "")
     notifybody['deliverydate'] = sapmsg.get('deliverydate', "")
@@ -58,8 +62,38 @@ def checkMessageValues(sapmsg, product):
     return notifybody
 
 
-# Prepare the notification message
-def prepareMessage(notifybody):
+# Check if all the required list items exist in the BUS2017 message
+def checkMessageValuesBUS2017(sapmsg, product):
+    notifybody = {}
+    logging.info("Check if all data is available in sap message")
+    notifybody['event'] = sapmsg.get('event', "")
+    notifybody['date'] = sapmsg.get('date', "")
+    notifybody['time'] = sapmsg.get('time', "")
+    notifybody['quantity'] = 0.0
+    notifybody['availQty'] = 0.0
+    goodsmovementlines = sapmsg.get('goodsmovementlines',{})
+        
+    logging.info("Get goodsmovementlines")
+    for goodsmovementline in goodsmovementlines:
+        logging.info("Check if all data is available in goodsmovementline")
+        goodsmovementline['product'] = goodsmovementline.get('product', "")
+        logging.info("Check product")
+        if goodsmovementline['product'] == product:
+            notifybody['product'] = goodsmovementline.get('product', "")
+            notifybody['plant'] = goodsmovementline.get('plant', "")
+            notifybody['storageloc'] = goodsmovementline.get('storageloc', "")
+            logging.info("Add quantity: " + str(goodsmovementline['quantity']))
+            notifybody['quantity'] += goodsmovementline.get('quantity', 0.00)
+            notifybody['availQty'] = goodsmovementline.get('availQty', 0.00)
+            notifybody['uom'] = goodsmovementline.get('uom', "")
+
+    logging.info("Quantity: " + str(notifybody['quantity']))
+
+    return notifybody
+
+
+# Prepare the notification message for LIKP
+def prepareMessageLIKP(notifybody):
     logging.info("Create message")
     notifymsg = {
         "notification": {
@@ -67,11 +101,33 @@ def prepareMessage(notifybody):
             "body":"We are happy to inform you that your order has been shipped to the store."
         }, 
             "data": {
+                "objkey":notifybody['objkey'],
                 "status":notifybody['event'],
                 "product":notifybody['product'],
                 "quantity":notifybody['quantity'],
                 "uom":notifybody['uom'],
                 "salesorder":notifybody['salesorder']
+            }
+        }
+    
+    logging.info(notifymsg)
+    return notifymsg
+
+
+# Prepare the notification message for BUS2017
+def prepareMessageBUS2017(notifybody):
+    logging.info("Create message")
+    notifymsg = {
+        "notification": {
+            "title":"Material availability changed for product " + notifybody['product'], 
+            "body":"The new availability quantity is: " + str(notifybody['availQty'])
+        }, 
+            "data": {
+                "plant":notifybody['plant'],
+                "product":notifybody['product'],
+                "addedQuantity":notifybody['quantity'],
+                "uom":notifybody['uom'],
+                "storageloc":notifybody['storageloc']
             }
         }
     
@@ -90,7 +146,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         logging.info(sapmsg)
 
         # check the values in the message
-        notifybody = checkMessageValues(sapmsg, "MZ-FG-R100")
+        if sapmsg.get('busobj', "") == "LIKP":
+            notifybody = checkMessageValuesLIKP(sapmsg, PRD_ID)
+        elif sapmsg.get('busobj', "") == "BUS2017":
+            notifybody = checkMessageValuesBUS2017(sapmsg, PRD_ID)
+        else:
+            notifybody = {}
+            notifybody['quantity'] = 0.0
 
         # if no relevant procucts for notification found, no need to continue
         if notifybody['quantity'] <= 0.0:
@@ -101,7 +163,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         # prepare the message
         logging.info("Prepare notification message")
-        notifymsg = prepareMessage(notifybody)
+        if sapmsg.get('busobj', "") == "LIKP":
+            notifymsg = prepareMessageLIKP(notifybody)
+        elif sapmsg.get('busobj', "") == "BUS2017":
+            notifymsg = prepareMessageBUS2017(notifybody)
+        else:
+            notifymsg = {}
 
         # retrieve the device tokens to notify from the Cosmos DB
         logging.info("Retrieve device tokens")
